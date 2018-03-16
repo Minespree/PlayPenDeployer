@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.minespree</groupId>
+    <artifactId>project-name</artifactId>
+    <version>1.0.0</version>
+
+    <!-- Always use UTF-8 -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <!-- Replace plugin.yml variables -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <!-- This profile will set the Maven's project version to the last commit if built from CI -->
+    <profiles>
+      <profile>
+        <id>gitlab-build</id>
+        <activation>
+          <property>
+            <name>env.CI</name>
+          </property>
+        </activation>
+        <properties>
+          <gitCommit>${env.CI_COMMIT_SHA}</gitCommit>
+        </properties>
+      </profile>
+      <profile>
+        <id>default-build</id>
+        <activation>
+            <property>
+                <name>!env.CI</name>
+            </property>
+        </activation>
+        <properties>
+            <gitCommit>${project.version}</gitCommit>
+        </properties>
+      </profile>
+    </profiles>
+</project>

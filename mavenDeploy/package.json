@@ -1,0 +1,21 @@
+{
+  "name": "playpen-maven-deploy",
+  "version": "1.0.0",
+  "private": true,
+  "author": {
+    "name": "Hugo Manrique",
+    "url": "https://hugmanrique.me",
+    "email": "npm@hugmanrique.me"
+  },
+  "main": "index.js",
+  "scripts": {
+    "install": "install.sh",
+    "deploy": "deploy.sh"
+  },
+  "dependencies": {
+    "maven-deploy": "^1.5.0"
+  },
+  "engines": {
+    "node": ">=8.10"
+  }
+}

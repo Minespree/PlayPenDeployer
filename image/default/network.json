@@ -1,0 +1,8 @@
+{
+  "_comment": "Network coordinator configuration",
+  "ip": "127.0.0.1",
+  "port": 9999,
+  "strings": {},
+  "_comment2": "# of megabytes at which a package will be split into multiple messages",
+  "package-size-split": 100
+}

@@ -1,0 +1,53 @@
+image: maven:3.3.9-jdk-8
+
+variables:
+  DOCKER_DRIVER: overlay2
+  # Directory name that contains these project's files in the playpen-packages repo
+  PLAYPEN_NAME: projectName
+  # Path where the produced artifacts will be moved
+  PACKAGE_PATH: plugins/
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+# Cache decompiled minecraft-server and Spigot-API artifacts
+
+maven-build:
+  stage: build
+  script: "mvn $MAVEN_CLI_OPTS package"
+  cache:
+    paths:
+      - .m2/repository
+  artifacts:
+    paths:
+    - target/*.jar
+    expire_in: 1 week
+
+maven-deploy:
+  stage: deploy
+  script: "mvn $MAVEN_CLI_OPTS deploy"
+  cache:
+    paths:
+      - .m2/repository
+  only:
+  - master
+
+playpen-test:
+  image: playpen-runner
+  stage: test
+  when: manual
+  script: "/home/upload.sh"
+  variables:
+    # Define PP_DEV_UUID, PP_DEV_KEY, PP_DEV_IP, PP_DEV_PORT, PP_DEV_USER and PP_DEV_SSH_KEY in "Secret variables"
+    PP_TYPE: DEV
+
+playpen-deploy:
+  image: playpen-runner
+  stage: deploy
+  when: manual
+  script: "/home/upload.sh"
+  variables:
+    # Define PP_PROD_UUID, PP_PROD_KEY, PP_PROD_IP, PP_PROD_PORT, PP_PROD_USER and PP_PROD_SSH_KEY in "Secret variables"
+    PP_TYPE: PROD
+  # We only allow main network deploys from the "master" branch
+  only:
+  - master
